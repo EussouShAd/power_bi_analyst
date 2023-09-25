@@ -16,10 +16,13 @@ CREATE TABLE employee(
     Address varchar(30),
     Sex char,
     Salary decimal(10,2),
-    Super_ssn char(9),
+    Super_ssn char(9) null,
     Dno int not null,
     constraint chk_salary_employee check (Salary> 2000.0),
-    constraint pk_employee primary key (Ssn)
+    constraint pk_employee primary key (Ssn),
+    constraint fk_employee foreign key (Super_ssn) references employee(Ssn)
+    on delete set null
+    on update cascade
 );
 
 alter table employee 
@@ -42,11 +45,12 @@ create table departament(
     constraint pk_dept primary key (Dnumber),
     constraint unique_name_dept unique(Dname),
     foreign key (Mgr_ssn) references employee(Ssn)
+    on update cascade
 );
 
 -- 'def', 'company_constraints', 'departament_ibfk_1', 'company_constraints', 'departament', 'FOREIGN KEY', 'YES'
 -- modificar uma constraint: drop e add
-alter table departament drop  departament_ibfk_1;
+alter table departament drop constraint departament_ibfk_1;
 alter table departament 
 		add constraint fk_dept foreign key(Mgr_ssn) references employee(Ssn)
         on update cascade;
@@ -60,7 +64,8 @@ create table dept_locations(
     constraint fk_dept_locations foreign key (Dnumber) references departament (Dnumber)
 );
 
-alter table dept_locations drop fk_dept_locations;
+
+alter table dept_locations drop constraint fk_dept_locations;
 
 alter table dept_locations 
 	add constraint fk_dept_locations foreign key (Dnumber) references departament(Dnumber)
